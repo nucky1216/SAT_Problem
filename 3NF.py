@@ -26,7 +26,7 @@ def RandomSign(num,NumListSpecific=None):
         out.append(int(r))
 
     return out,x
-def Produce3NF(num_arrays,num_cluases,file=None):
+def Produce3NF(num_arrays,num_cluases,file=None,Compelete=True):
 
 
     text='p cnf '+str(num_arrays)+' '+str(num_cluases)
@@ -47,7 +47,7 @@ def Produce3NF(num_arrays,num_cluases,file=None):
         text+=strs
         CheckVaribleNum=list(set(CheckVaribleNum))
 
-    if len(CheckVaribleNum) < VARIBLES:
+    if Compelete and len(CheckVaribleNum) < VARIBLES:
         ListTotal=range(1,VARIBLES+1)
         RemainList=list(set(ListTotal)-set(CheckVaribleNum))
 
@@ -64,21 +64,21 @@ def Produce3NF(num_arrays,num_cluases,file=None):
 
                 strs = str(re_clause) + ' 0\n'
                 text += strs
-                #CheckVaribleNum = list(set(CheckVaribleNum))
+                CheckVaribleNum = list(set(CheckVaribleNum))
 
 
-
-    print(text)
+    var_num=len(CheckVaribleNum)
+    #print(text)
     print('========================SAT=====================')
     start_time=time.time()
     Satisfy=g.solve()
-    LN_ratio=num_cluases/VARIBLES
+    LN_ratio=num_cluases/var_num
 
     acc_time=g.time_accum()
 
 
     print('Satisify:',Satisfy)
-    print('Variables(N):',VARIBLES,'Num_clause(L):',num_cluases,'L/N:',LN_ratio)
+    print('Variables(N):',var_num,'Num_clause(L):',num_cluases,'L/N:',LN_ratio)
     print('accu time:',g.time_accum())
     print('call time:', g.call_time)
 
@@ -137,13 +137,19 @@ if __name__=='__main__':
     #
     # print(RandomSign(4))
     #
-    Num_Formulas=300
-    ration=[]
-    times=[]
+    Num_Formulas=200
+
+    plt_list=[]
     for i in range(Num_Formulas):
-        sat,LN,t=Produce3NF(VARIBLES, 25+i,file=i)
-        ration.append(LN)
-        times.append(t)
-    Plot(ration,times)
+        sat,LN,t=Produce3NF(VARIBLES, 25+i,file=i,Compelete=False)
+        plt_list.append([LN,t])
+
+    temp=np.array(plt_list)
+    temp.sort(axis=0)
+
+    r=list(temp[:,0])
+    t=list(temp[:,1])
+
+    Plot(r,t)
 
 
