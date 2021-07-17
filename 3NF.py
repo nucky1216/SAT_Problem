@@ -64,6 +64,7 @@ def Produce3NF(num_arrays,num_cluases,file=None,Compelete=True):
 
                 strs = str(re_clause) + ' 0\n'
                 text += strs
+                CheckVaribleNum.extend(abs_reClause)
                 CheckVaribleNum = list(set(CheckVaribleNum))
 
 
@@ -92,7 +93,7 @@ def Produce3NF(num_arrays,num_cluases,file=None,Compelete=True):
     print()
     if file!=None:
         with open(f'CNF\Phase_{file}.cnf','w') as f:
-            #f.write(text)
+            f.write(text)
             pass
     return Satisfy,LN_ratio,acc_time
 def Test():
@@ -130,26 +131,44 @@ def Plot(x,y):
     plt.xlabel('L/N ratio')
     plt.ylabel('time cost')
     plt.plot(x,y)
-    plt.show()
     plt.savefig('transition.jpg')
+    plt.show()
+
+
+def SortByFirst(elem):
+    return elem[0]
 if __name__=='__main__':
     print('Hello')
     #
     # print(RandomSign(4))
     #
-    Num_Formulas=200
+    Num_Formulas=400
 
     plt_list=[]
     for i in range(Num_Formulas):
-        sat,LN,t=Produce3NF(VARIBLES, 25+i,file=i,Compelete=False)
+        sat,LN,t=Produce3NF(VARIBLES, i+1,Compelete=True)
         plt_list.append([LN,t])
 
-    temp=np.array(plt_list)
-    temp.sort(axis=0)
 
-    r=list(temp[:,0])
-    t=list(temp[:,1])
+    plt_list.sort(key=SortByFirst)
 
+    r = []
+    t = []
+    max=-1
+
+    #Smooth
+    for i in plt_list:
+        if max<i[1]:
+            max=i[1]
+        if i[1]>0.0006:
+            continue
+        r.append(i[0])
+        t.append(i[1])
+
+
+    print(r)
+    print(t)
+    print('max:',max)
     Plot(r,t)
 
 
