@@ -11,7 +11,7 @@ def RandomSign(num,NumListSpecific=None):
     if NumListSpecific is None:
         NumList = range(1, num + 1)
         VariablesNumList=[1,2,3]
-        VariablesNum=np.random.choice(VariablesNumList)
+        VariablesNum=3#np.random.choice(VariablesNumList)
 
     else:
         NumList=NumListSpecific
