@@ -141,7 +141,7 @@ if __name__=='__main__':
     ration=[]
     times=[]
     for i in range(Num_Formulas):
-        sat,LN,t=Produce3NF(VARIBLES, 20+i,file=i)
+        sat,LN,t=Produce3NF(VARIBLES, 15+i,file=i)
         ration.append(LN)
         times.append(t)
     Plot(ration,times)
