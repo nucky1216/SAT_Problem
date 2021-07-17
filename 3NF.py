@@ -2,9 +2,9 @@ import numpy as np
 from pysat.solvers import *
 import time
 from pysat.formula import CNF
+from matplotlib import pyplot as plt
 
-
-VARIBLES=3
+VARIBLES=50
 
 def RandomSign(num,NumListSpecific=None):
     SignsList=[-1,1]
@@ -48,7 +48,7 @@ def Produce3NF(num_arrays,num_cluases,file=None):
         CheckVaribleNum=list(set(CheckVaribleNum))
 
     if len(CheckVaribleNum) < VARIBLES:
-        ListTotal=range(1,VARIBLES)
+        ListTotal=range(1,VARIBLES+1)
         RemainList=list(set(ListTotal)-set(CheckVaribleNum))
 
         ClauseElems = []
@@ -72,9 +72,13 @@ def Produce3NF(num_arrays,num_cluases,file=None):
     print('========================SAT=====================')
     start_time=time.time()
     Satisfy=g.solve()
+    LN_ratio=num_cluases/VARIBLES
+
+    acc_time=g.time_accum()
+
 
     print('Satisify:',Satisfy)
-    print('Variables:',VARIBLES,'Num_clause:',num_cluases)
+    print('Variables(N):',VARIBLES,'Num_clause(L):',num_cluases,'L/N:',LN_ratio)
     print('accu time:',g.time_accum())
     print('call time:', g.call_time)
 
@@ -90,6 +94,7 @@ def Produce3NF(num_arrays,num_cluases,file=None):
         with open(f'CNF\Phase_{file}.cnf','w') as f:
             #f.write(text)
             pass
+    return Satisfy,LN_ratio,acc_time
 def Test():
     f=CNF()
     g=Glucose3(use_timer=True,with_proof=True)
@@ -119,16 +124,26 @@ def Test():
     print('staus:',g.get_status())
 
     print(g.get_model())
+def Plot(x,y):
 
+    plt.title('Phase Transition')
+    plt.xlabel('L/N ratio')
+    plt.ylabel('time cost')
+    plt.plot(x,y)
+    plt.show()
+    plt.savefig('transition.jpg')
 if __name__=='__main__':
     print('Hello')
     #
     # print(RandomSign(4))
     #
-    Num_Formulas=10000
-    # for i in range(Num_Formulas):
-    #     Produce3NF(VARIBLES, 50+i,file=i)
+    Num_Formulas=300
+    ration=[]
+    times=[]
+    for i in range(Num_Formulas):
+        sat,LN,t=Produce3NF(VARIBLES, 20+i,file=i)
+        ration.append(LN)
+        times.append(t)
+    Plot(ration,times)
 
-    #Produce3NF(VARIBLES, 4)
-    Test()
 
